@@ -136,39 +136,6 @@ where
     value.serialize(&mut serializer)
 }
 
-/// Converts a `serde_json::Value` to a JSON string with the given configuration.
-///
-/// This function uses a compact formatter (no pretty printing).
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{to_value, Config};
-/// use serde_json::json;
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let value = json!({"data": [1, 2, 3]});
-/// let json = to_value(&value, &config).unwrap();
-/// ```
-pub fn to_value(value: &serde_json::Value, config: &Config) -> serde_json::Result<String> {
-    to_string(value, config)
-}
-
-/// Converts a `serde_json::Value` to a pretty-printed JSON string with the given configuration.
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{to_value_pretty, Config};
-/// use serde_json::json;
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let value = json!({"data": [1, 2, 3]});
-/// let json = to_value_pretty(&value, &config).unwrap();
-/// ```
-pub fn to_value_pretty(value: &serde_json::Value, config: &Config) -> serde_json::Result<String> {
-    to_string_pretty(value, config)
-}
 
 #[cfg(test)]
 mod tests {

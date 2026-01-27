@@ -83,28 +83,3 @@ where
     T::deserialize(wrapper)
 }
 
-/// Deserializes a value from a `serde_json::Value` with the given configuration.
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{from_value, Config};
-/// use serde_json::json;
-///
-/// #[derive(serde::Deserialize)]
-/// struct TestStruct {
-///     data: Vec<u8>,
-/// }
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let value = json!({"data": "0x010203"});
-/// let result: TestStruct = from_value(value, &config).unwrap();
-/// ```
-pub fn from_value<T>(value: serde_json::Value, config: &Config) -> serde_json::Result<T>
-where
-    T: for<'de> Deserialize<'de>,
-{
-    // Convert Value to string first, then deserialize with our custom deserializer
-    let json_str = serde_json::to_string(&value)?;
-    from_str(&json_str, config)
-}
