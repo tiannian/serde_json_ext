@@ -20,11 +20,8 @@ pub fn to_string<T>(value: &T, config: &Config) -> serde_json::Result<String>
 where
     T: ?Sized + serde::Serialize,
 {
-    let formatter = CompactFormatter::with_config(config.clone());
-    let mut writer = Vec::new();
-    let mut serializer = serde_json::Serializer::with_formatter(&mut writer, formatter);
-    value.serialize(&mut serializer)?;
-    Ok(String::from_utf8(writer).unwrap())
+    let bytes = to_vec(value, config)?;
+    Ok(String::from_utf8(bytes).unwrap())
 }
 
 /// Serializes a value to a pretty-printed JSON string with the given configuration.
@@ -41,11 +38,8 @@ pub fn to_string_pretty<T>(value: &T, config: &Config) -> serde_json::Result<Str
 where
     T: ?Sized + serde::Serialize,
 {
-    let formatter = PrettyFormatter::with_config(config.clone());
-    let mut writer = Vec::new();
-    let mut serializer = serde_json::Serializer::with_formatter(&mut writer, formatter);
-    value.serialize(&mut serializer)?;
-    Ok(String::from_utf8(writer).unwrap())
+    let bytes = to_vec_pretty(value, config)?;
+    Ok(String::from_utf8(bytes).unwrap())
 }
 
 /// Serializes a value to a JSON byte vector with the given configuration.
@@ -64,10 +58,8 @@ pub fn to_vec<T>(value: &T, config: &Config) -> serde_json::Result<Vec<u8>>
 where
     T: ?Sized + serde::Serialize,
 {
-    let formatter = CompactFormatter::with_config(config.clone());
-    let mut writer = Vec::new();
-    let mut serializer = serde_json::Serializer::with_formatter(&mut writer, formatter);
-    value.serialize(&mut serializer)?;
+    let mut writer = Vec::with_capacity(128);
+    to_writer(&mut writer, value, config)?;
     Ok(writer)
 }
 
@@ -85,10 +77,8 @@ pub fn to_vec_pretty<T>(value: &T, config: &Config) -> serde_json::Result<Vec<u8
 where
     T: ?Sized + serde::Serialize,
 {
-    let formatter = PrettyFormatter::with_config(config.clone());
-    let mut writer = Vec::new();
-    let mut serializer = serde_json::Serializer::with_formatter(&mut writer, formatter);
-    value.serialize(&mut serializer)?;
+    let mut writer = Vec::with_capacity(128);
+    to_writer_pretty(&mut writer, value, config)?;
     Ok(writer)
 }
 
