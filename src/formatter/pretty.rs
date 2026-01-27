@@ -1,6 +1,6 @@
 // Pretty formatter for JSON
 
-use crate::{Config, ser_bytes::ser_bytes};
+use crate::{Config, ser::ser_bytes::ser_bytes};
 use std::io::Write;
 
 /// Pretty formatter for JSON serialization

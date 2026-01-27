@@ -5,13 +5,8 @@ pub use config::*;
 
 pub(crate) mod formatter;
 
-pub(crate) mod de_bytes;
-pub(crate) mod ser_bytes;
-
-mod to;
-pub use to::*;
-
-mod from;
-pub use from::*;
+pub(crate) mod ser;
+pub use ser::to::*;
 
 pub(crate) mod de;
+pub use de::from::*;

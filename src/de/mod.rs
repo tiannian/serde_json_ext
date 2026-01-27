@@ -4,7 +4,8 @@ use crate::Config;
 use serde::de::Visitor;
 use serde_json::de::Read;
 
-use crate::de_bytes;
+mod bytes;
+pub mod from;
 
 /// A wrapper around `serde_json::Deserializer` that implements `Deserializer<'de>`
 pub struct Deserializer<'a, R> {
@@ -150,7 +151,7 @@ where
     where
         V: Visitor<'de>,
     {
-        de_bytes::de_bytes(&mut self.inner, &self.config, visitor)
+        bytes::de_bytes(&mut self.inner, &self.config, visitor)
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
