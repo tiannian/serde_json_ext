@@ -1,9 +1,17 @@
 // Library crate for serde_json_helper
 
 mod config;
-pub mod formatter;
-pub mod bytes;
-mod to;
-
 pub use config::*;
-pub use bytes::serde_bytes;
+
+pub(crate) mod formatter;
+
+pub(crate) mod de_bytes;
+pub(crate) mod ser_bytes;
+
+mod to;
+pub use to::*;
+
+mod from;
+pub use from::*;
+
+pub(crate) mod de;

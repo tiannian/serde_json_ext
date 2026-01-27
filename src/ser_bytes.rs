@@ -15,7 +15,7 @@ use std::io::Write;
 /// # Returns
 ///
 /// Returns `std::io::Result<()>` indicating success or failure
-pub fn serde_bytes<W, F>(
+pub(crate) fn ser_bytes<W, F>(
     writer: &mut W,
     formatter: &mut F,
     config: &Config,
@@ -26,15 +26,15 @@ where
     F: serde_json::ser::Formatter,
 {
     match config.bytes_format {
-        BytesFormat::Default => serde_bytes_array(writer, formatter, value),
-        BytesFormat::Hex => serde_bytes_hex(writer, formatter, config, value),
-        BytesFormat::Base64 => serde_bytes_base64(writer, formatter, false, value),
-        BytesFormat::Base64UrlSafe => serde_bytes_base64(writer, formatter, true, value),
+        BytesFormat::Default => ser_bytes_array(writer, formatter, value),
+        BytesFormat::Hex => ser_bytes_hex(writer, formatter, config, value),
+        BytesFormat::Base64 => ser_bytes_base64(writer, formatter, false, value),
+        BytesFormat::Base64UrlSafe => ser_bytes_base64(writer, formatter, true, value),
     }
 }
 
 /// Serializes bytes as an array of numbers [1, 2, 3]
-pub fn serde_bytes_array<W, F>(
+pub(crate) fn ser_bytes_array<W, F>(
     writer: &mut W,
     formatter: &mut F,
     value: &[u8],
@@ -47,7 +47,7 @@ where
 }
 
 /// Serializes bytes as a hexadecimal string "0x1234..." or "1234..."
-pub fn serde_bytes_hex<W, F>(
+pub(crate) fn ser_bytes_hex<W, F>(
     writer: &mut W,
     formatter: &mut F,
     config: &Config,
@@ -58,7 +58,7 @@ where
     F: serde_json::ser::Formatter,
 {
     let hex_str = hex::encode(value);
-    
+
     formatter.begin_string(writer)?;
     if config.hex_prefix {
         formatter.write_string_fragment(writer, "0x")?;
@@ -73,7 +73,7 @@ where
 /// # Arguments
 ///
 /// * `url_safe` - If true, uses URL-safe Base64 encoding, otherwise uses standard Base64
-pub fn serde_bytes_base64<W, F>(
+pub(crate) fn ser_bytes_base64<W, F>(
     writer: &mut W,
     formatter: &mut F,
     url_safe: bool,

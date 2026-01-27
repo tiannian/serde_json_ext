@@ -22,16 +22,17 @@ pub struct Config {
     pub(crate) hex_prefix: bool,
 }
 
-impl Config {
-    /// Creates a default configuration
-    pub fn default() -> Self {
+impl Default for Config {
+    fn default() -> Self {
         Config {
             bytes_format: BytesFormat::Default,
             hex_eip55: false,
             hex_prefix: false,
         }
     }
+}
 
+impl Config {
     /// Sets bytes format to default (array of numbers)
     pub fn set_bytes_default(mut self) -> Self {
         self.bytes_format = BytesFormat::Default;
