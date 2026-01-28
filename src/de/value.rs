@@ -1,6 +1,6 @@
 // Deserializer wrapper for serde_json::Value
 
-use crate::Config;
+use crate::{Config, de::bytes};
 use serde::de::Visitor;
 
 /// A wrapper around `serde_json::Value` that implements `Deserializer<'de>`
@@ -144,7 +144,7 @@ impl<'de> serde::de::Deserializer<'de> for Value<'de> {
     where
         V: Visitor<'de>,
     {
-        self.value.deserialize_bytes(visitor)
+        bytes::de_bytes(self.value, self.config, visitor)
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>

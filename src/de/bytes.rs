@@ -1,8 +1,7 @@
 // Bytes deserialization utilities
 
 use crate::{BytesFormat, Config};
-use serde::de::{Deserializer as _, Visitor};
-use serde_json::de::Read;
+use serde::de::Visitor;
 
 /// Deserializes bytes from JSON format based on the configuration
 ///
@@ -15,13 +14,13 @@ use serde_json::de::Read;
 /// # Returns
 ///
 /// Returns `Result<V::Value, serde_json::Error>` indicating success or failure
-pub(crate) fn de_bytes<'de, R, V>(
-    deserializer: &mut serde_json::de::Deserializer<R>,
+pub(crate) fn de_bytes<'de, D, V>(
+    deserializer: D,
     config: &Config,
     visitor: V,
-) -> Result<V::Value, serde_json::Error>
+) -> Result<V::Value, D::Error>
 where
-    R: Read<'de>,
+    D: serde::de::Deserializer<'de>,
     V: Visitor<'de>,
 {
     match config.bytes_format {
@@ -33,25 +32,22 @@ where
 }
 
 /// Deserializes bytes from a JSON array of numbers [1, 2, 3]
-pub(crate) fn de_bytes_array<'de, R, V>(
-    deserializer: &mut serde_json::de::Deserializer<R>,
-    visitor: V,
-) -> Result<V::Value, serde_json::Error>
+pub(crate) fn de_bytes_array<'de, D, V>(deserializer: D, visitor: V) -> Result<V::Value, D::Error>
 where
-    R: Read<'de>,
+    D: serde::de::Deserializer<'de>,
     V: Visitor<'de>,
 {
     deserializer.deserialize_bytes(visitor)
 }
 
 /// Deserializes bytes from a hexadecimal string "0x1234..." or "1234..."
-pub(crate) fn de_bytes_hex<'de, R, V>(
-    deserializer: &mut serde_json::de::Deserializer<R>,
+pub(crate) fn de_bytes_hex<'de, D, V>(
+    deserializer: D,
     _config: &Config,
     visitor: V,
-) -> Result<V::Value, serde_json::Error>
+) -> Result<V::Value, D::Error>
 where
-    R: Read<'de>,
+    D: serde::de::Deserializer<'de>,
     V: Visitor<'de>,
 {
     struct HexBytesVisitor<V> {
@@ -98,13 +94,13 @@ where
 /// # Arguments
 ///
 /// * `url_safe` - If true, uses URL-safe Base64 decoding, otherwise uses standard Base64
-pub(crate) fn de_bytes_base64<'de, R, V>(
-    deserializer: &mut serde_json::de::Deserializer<R>,
+pub(crate) fn de_bytes_base64<'de, D, V>(
+    deserializer: D,
     url_safe: bool,
     visitor: V,
-) -> Result<V::Value, serde_json::Error>
+) -> Result<V::Value, D::Error>
 where
-    R: Read<'de>,
+    D: serde::de::Deserializer<'de>,
     V: Visitor<'de>,
 {
     struct Base64BytesVisitor<V> {
