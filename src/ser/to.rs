@@ -153,6 +153,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use serde_json::json;
+
     use super::*;
 
     #[test]
@@ -575,6 +577,10 @@ mod tests {
         let config = Config::default().set_bytes_hex().enable_hex_prefix();
 
         let value = to_value(&test_data, &config).unwrap();
-        println!("to_value bytes default: {:?}", value);
+
+        let expect = json!({
+            "data": "0x010203"
+        });
+        assert_eq!(value, expect);
     }
 }
