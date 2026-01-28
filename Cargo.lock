@@ -98,7 +98,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_json_helper"
+name = "serde_json_ext"
 version = "0.1.0"
 dependencies = [
  "base64",
