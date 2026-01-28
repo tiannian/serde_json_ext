@@ -12,7 +12,7 @@ use std::io::Write;
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_string, Config};
+/// use serde_json_ext::{to_string, Config};
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_string(&vec![1u8, 2u8, 3u8], &config).unwrap();
@@ -30,7 +30,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_string_pretty, Config};
+/// use serde_json_ext::{to_string_pretty, Config};
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_string_pretty(&vec![1u8, 2u8, 3u8], &config).unwrap();
@@ -50,7 +50,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_vec, Config};
+/// use serde_json_ext::{to_vec, Config};
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_vec(&vec![1u8, 2u8, 3u8], &config).unwrap();
@@ -69,7 +69,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_vec_pretty, Config};
+/// use serde_json_ext::{to_vec_pretty, Config};
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_vec_pretty(&vec![1u8, 2u8, 3u8], &config).unwrap();
@@ -90,7 +90,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_writer, Config};
+/// use serde_json_ext::{to_writer, Config};
 /// use std::io::stdout;
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
@@ -111,7 +111,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_writer_pretty, Config};
+/// use serde_json_ext::{to_writer_pretty, Config};
 /// use std::io::stdout;
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
@@ -132,7 +132,7 @@ where
 /// # Example
 ///
 /// ```
-/// use serde_json_helper::{to_value, Config};
+/// use serde_json_ext::{to_value, Config};
 ///
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let value = to_value(&vec![1u8, 2u8, 3u8], &config).unwrap();
