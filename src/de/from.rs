@@ -73,6 +73,24 @@ mod tests {
     }
 
     #[test]
+    fn test_from_value_hex_without_prefix_to_vec_u8() {
+        let config = Config::default().set_bytes_hex().disable_hex_prefix();
+
+        #[derive(Deserialize, Debug)]
+        struct TestStruct {
+            #[serde(with = "serde_bytes")]
+            data: Vec<u8>,
+        }
+
+        let json = json!({
+            "data": "0000ff"
+        });
+
+        let result: Result<TestStruct> = from_value(json, &config);
+        assert_eq!(result.unwrap().data, vec![0, 0, 255]);
+    }
+
+    #[test]
     fn test_from_str_hex_with_prefix_to_vec_u8() {
         let config = Config::default().set_bytes_hex().enable_hex_prefix();
 
@@ -88,5 +106,51 @@ mod tests {
 
         let result: Result<TestStruct> = from_value(json, &config);
         assert_eq!(result.unwrap().data, vec![0, 0, 255]);
+    }
+
+    #[test]
+    fn test_from_value_hex_without_prefix_to_array_u8_20() {
+        let config = Config::default().set_bytes_hex().disable_hex_prefix();
+
+        #[derive(Deserialize, Debug)]
+        struct TestStruct {
+            #[serde(with = "serde_bytes")]
+            data: [u8; 20],
+        }
+
+        let json = json!({
+            "data": "000102030405060708090a0b0c0d0e0f10111213"
+        });
+
+        let result: Result<TestStruct> = from_value(json, &config);
+        assert_eq!(
+            result.unwrap().data,
+            [
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+            ]
+        );
+    }
+
+    #[test]
+    fn test_from_value_hex_with_prefix_to_array_u8_20() {
+        let config = Config::default().set_bytes_hex().enable_hex_prefix();
+
+        #[derive(Deserialize, Debug)]
+        struct TestStruct {
+            #[serde(with = "serde_bytes")]
+            data: [u8; 20],
+        }
+
+        let json = json!({
+            "data": "0x000102030405060708090a0b0c0d0e0f10111213"
+        });
+
+        let result: Result<TestStruct> = from_value(json, &config);
+        assert_eq!(
+            result.unwrap().data,
+            [
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+            ]
+        );
     }
 }
