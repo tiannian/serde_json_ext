@@ -180,4 +180,31 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_from_value_hex_with_prefix_to_newtype_const_array_u8_20() {
+        let config = Config::default().set_bytes_hex().enable_hex_prefix();
+
+        #[derive(Deserialize, Debug)]
+        #[serde(transparent)]
+        struct Address<const N: usize>(#[serde(with = "serde_bytes")] [u8; N]);
+
+        #[derive(Deserialize, Debug)]
+        struct TestStruct {
+            address: Address<20>,
+        }
+
+        let json = json!({
+            "address": "0x000102030405060708090a0b0c0d0e0f10111213"
+        });
+
+        let result: Result<TestStruct> = from_value(json, &config);
+        let address = result.unwrap().address;
+        assert_eq!(
+            address.0,
+            [
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+            ]
+        );
+    }
 }

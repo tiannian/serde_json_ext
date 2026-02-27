@@ -583,4 +583,31 @@ mod tests {
         });
         assert_eq!(value, expect);
     }
+
+    #[test]
+    fn test_to_value_bytes_hex_newtype_const_array() {
+        #[derive(serde::Serialize)]
+        #[serde(transparent)]
+        struct Address<const N: usize>(#[serde(with = "serde_bytes")] [u8; N]);
+
+        #[derive(serde::Serialize)]
+        struct TestStruct {
+            address: Address<20>,
+        }
+
+        let test_data = TestStruct {
+            address: Address([
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            ]),
+        };
+
+        let config = Config::default().set_bytes_hex().enable_hex_prefix();
+
+        let value = to_value(&test_data, &config).unwrap();
+
+        let expect = json!({
+            "address": "0x000102030405060708090a0b0c0d0e0f10111213"
+        });
+        assert_eq!(value, expect);
+    }
 }
