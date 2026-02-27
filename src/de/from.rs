@@ -194,12 +194,19 @@ mod tests {
             address: Address<20>,
         }
 
+        #[derive(Deserialize, Debug)]
+        struct TestStruct1 {
+            data: TestStruct,
+        }
+
         let json = json!({
-            "address": "0x000102030405060708090a0b0c0d0e0f10111213"
+            "data" :{
+                "address": "0x000102030405060708090a0b0c0d0e0f10111213"
+            }
         });
 
-        let result: Result<TestStruct> = from_value(json, &config);
-        let address = result.unwrap().address;
+        let result: Result<TestStruct1> = from_value(json, &config);
+        let address = result.unwrap().data.address;
         assert_eq!(
             address.0,
             [

@@ -156,7 +156,6 @@ where
     where
         V: Visitor<'de>,
     {
-        // self.inner.deserialize_byte_buf(visitor)
         bytes::de_bytes(self.inner, self.config, visitor)
     }
 
@@ -164,7 +163,10 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_option(visitor)
+        self.inner.deserialize_option(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>

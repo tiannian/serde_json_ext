@@ -3,7 +3,10 @@ use std::fmt;
 
 use crate::{
     Config,
-    de::{enum_access::WrapEnumAccess, map_access::WrapMapAccess, seq_access::WrapSeqAccess},
+    de::{
+        Deserializer, enum_access::WrapEnumAccess, map_access::WrapMapAccess,
+        seq_access::WrapSeqAccess,
+    },
 };
 
 pub struct WrapVisitor<'a, V> {
@@ -172,7 +175,9 @@ where
     where
         D: serde::de::Deserializer<'de>,
     {
-        self.visitor.visit_some(deserializer)
+        let de = Deserializer::with_config(deserializer, self.config);
+
+        self.visitor.visit_some(de)
     }
 
     fn visit_unit<E>(self) -> Result<Self::Value, E>
@@ -186,7 +191,8 @@ where
     where
         D: serde::de::Deserializer<'de>,
     {
-        self.visitor.visit_newtype_struct(deserializer)
+        let de = Deserializer::with_config(deserializer, self.config);
+        self.visitor.visit_newtype_struct(de)
     }
 
     fn visit_seq<A>(self, seq: A) -> Result<Self::Value, A::Error>
