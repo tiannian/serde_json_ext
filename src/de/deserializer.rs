@@ -173,7 +173,10 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_unit(visitor)
+        self.inner.deserialize_unit(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_unit_struct<V>(
@@ -184,7 +187,13 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_unit_struct(name, visitor)
+        self.inner.deserialize_unit_struct(
+            name,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 
     fn deserialize_newtype_struct<V>(
@@ -195,7 +204,13 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_newtype_struct(name, visitor)
+        self.inner.deserialize_newtype_struct(
+            name,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -273,14 +288,20 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_identifier(visitor)
+        self.inner.deserialize_identifier(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_ignored_any(visitor)
+        self.inner.deserialize_ignored_any(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_enum<V>(

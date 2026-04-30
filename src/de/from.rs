@@ -214,4 +214,34 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_from_value_hex_with_prefix_to_untagged_vec_u8() {
+        let config = Config::default().set_bytes_hex().enable_hex_prefix();
+
+        #[derive(Deserialize, Debug)]
+        pub struct TestStruct1 {}
+
+        #[derive(Deserialize, Debug)]
+        #[serde(untagged)]
+        enum UntaggedBytes {
+            Bytes(#[serde(with = "serde_bytes")] Vec<u8>),
+            Other(TestStruct1),
+        }
+
+        #[derive(Deserialize, Debug)]
+        struct TestStruct {
+            data: UntaggedBytes,
+        }
+
+        let json = json!({
+            "data": "0x0000ff"
+        });
+
+        let result: Result<TestStruct> = from_value(json, &config);
+        match result.unwrap().data {
+            UntaggedBytes::Bytes(bytes) => assert_eq!(bytes, vec![0, 0, 255]),
+            UntaggedBytes::Other(value) => panic!("unexpected untagged variant: {:?}", value),
+        }
+    }
 }
