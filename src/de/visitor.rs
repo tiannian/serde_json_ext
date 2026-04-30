@@ -2,12 +2,35 @@ use serde::de::{EnumAccess, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 
 use crate::{
-    Config,
+    BytesFormat, Config,
     de::{
         Deserializer, enum_access::WrapEnumAccess, map_access::WrapMapAccess,
         seq_access::WrapSeqAccess,
     },
 };
+
+fn try_decode_bytes(config: &Config, value: &str) -> Option<Vec<u8>> {
+    match config.bytes_format {
+        BytesFormat::Default => None,
+        BytesFormat::Hex => {
+            let hex_str = if value.starts_with("0x") || value.starts_with("0X") {
+                &value[2..]
+            } else {
+                value
+            };
+            hex::decode(hex_str).ok()
+        }
+        BytesFormat::Base64 | BytesFormat::Base64UrlSafe => {
+            use base64::{Engine as _, engine::general_purpose};
+            let engine = if matches!(config.bytes_format, BytesFormat::Base64UrlSafe) {
+                &general_purpose::URL_SAFE
+            } else {
+                &general_purpose::STANDARD
+            };
+            engine.decode(value).ok()
+        }
+    }
+}
 
 pub struct WrapVisitor<'a, V> {
     pub visitor: V,
@@ -126,6 +149,9 @@ where
     where
         E: serde::de::Error,
     {
+        if let Some(bytes) = try_decode_bytes(self.config, v) {
+            return self.visitor.visit_byte_buf(bytes);
+        }
         self.visitor.visit_str(v)
     }
 
@@ -133,6 +159,9 @@ where
     where
         E: serde::de::Error,
     {
+        if let Some(bytes) = try_decode_bytes(self.config, v) {
+            return self.visitor.visit_byte_buf(bytes);
+        }
         self.visitor.visit_borrowed_str(v)
     }
 
@@ -140,6 +169,9 @@ where
     where
         E: serde::de::Error,
     {
+        if let Some(bytes) = try_decode_bytes(self.config, &v) {
+            return self.visitor.visit_byte_buf(bytes);
+        }
         self.visitor.visit_string(v)
     }
 

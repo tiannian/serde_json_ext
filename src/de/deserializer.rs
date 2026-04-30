@@ -30,7 +30,10 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_any(visitor)
+        self.inner.deserialize_any(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>

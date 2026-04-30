@@ -241,7 +241,7 @@ mod tests {
         let result: Result<TestStruct> = from_value(json, &config);
         match result.unwrap().data {
             UntaggedBytes::Bytes(bytes) => assert_eq!(bytes, vec![0, 0, 255]),
-            UntaggedBytes::Other(value) => panic!("unexpected untagged variant: {:?}", value),
+            UntaggedBytes::Other(_) => panic!("unexpected untagged variant"),
         }
     }
 }
